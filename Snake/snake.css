@@ -1,0 +1,99 @@
+/* --- PALETTE GAME BOY --- */
+:root {
+    --gb-white:  #9bbc0f; /* Fond d'écran */
+    --gb-light:  #8bac0f; /* Fond de page */
+    --gb-dark:   #306230; /* Ombres */
+    --gb-black:  #0f380f; /* Serpent/Texte */
+}
+
+body {
+    background-color: var(--gb-light);
+    color: var(--gb-black);
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    text-transform: uppercase; 
+}
+
+/* Cadre de l'écran */
+#screen-border {
+    background-color: #555; /* Gris plastique console */
+    padding: 20px 20px 40px 20px;
+    border-radius: 10px 10px 40px 10px;
+    box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+}
+
+/* L'écran lui-même */
+canvas {
+    background-color: var(--gb-white);
+    border: 4px solid var(--gb-black);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+    image-rendering: pixelated; /* Rendu net des pixels */
+    display: block;
+}
+
+h1 {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+    letter-spacing: 2px;
+}
+
+p { margin: 5px 0; }
+
+/* Le bouton Rejouer */
+#btnRejouer {
+    display: none;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: var(--gb-black);
+    color: var(--gb-white);
+    border: 2px solid var(--gb-black);
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+#btnRejouer:hover {
+    background-color: var(--gb-white);
+    color: var(--gb-black);
+}
+
+#btnRetour {
+    position: absolute;
+    top: 20px;
+    left:20px;
+    padding: 15px 25px;
+    background-color: var(--gb-black);
+    color: var(--gb-white);
+    border: 2px solid var(--gb-black);
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 5%;
+
+}
+
+#btnRetour:hover {
+    background-color: var(--gb-white);
+    color: var(--gb-black);
+}
+
+/* Petite diode rouge pour le style */
+.led {
+    width: 8px; height: 8px;
+    background-color: #f00;
+    border-radius: 50%;
+    margin-top: 5px;
+    opacity: 0.8;
+    box-shadow: 0 0 5px red;
+}
+.power-text { font-size: 10px; color: #ccc; margin-left: 5px; }
+.power-container { display: flex; align-items: center; margin-top: 5px;}

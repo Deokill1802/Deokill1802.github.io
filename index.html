@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio | Développeur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="portfolio.css">
+  <link href="image/icone.png" rel="shortcut icon" type="image/x-icon" />
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.9/build/spline-viewer.js"></script>
+</head>
+<body>
+
+  <div id="loader-wrapper">
+    <div class="loader-content">
+      <p class="loader-text" id="loader-text">Chargement... 0%</p>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="music-player">
+    <div class="ipod-screen">
+      <div id="now-playing-view">
+        <div id="trackName">🎵 Track</div>
+        <div class="volume-container">
+          🔊 <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        </div>
+      </div>
+      
+      <div id="menu-view" style="display: none;">
+        <ul id="playlist"></ul>
+      </div>
+    </div>
+    
+    <div class="ipod-wheel">
+      <button class="wheel-btn top-btn" onclick="toggleMenu()">MENU</button>
+      <button class="wheel-btn left-btn" onclick="prevTrack()">⏮</button>
+      <button class="wheel-btn right-btn" onclick="nextTrack()">⏭</button>
+      <button class="wheel-btn bottom-btn" id="playBtn" onclick="togglePlay()">▶</button>
+      <div class="wheel-center"></div>
+    </div>
+  </div>
+
+  <div class="en-ligne">
+    <p>🟢 Toujours disponible</p>
+  </div>
+
+  <div class="container">
+    <section class="hero show">
+      <div class="card hero-card">
+        <div class="avatar-container">
+          <img src="image/avatar.jpg" class="avatar" alt="Avatar">
+        </div>
+        <div class="hero-text">
+          <p class="greeting">Salut, moi c'est</p>
+          <h1>RUEL Théo</h1>
+          <p class="subtitle" id="typewriter"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about show">
+      <div class="card about-card">
+        <div class="about-text">
+          <h2>Mon parcours</h2>
+          
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-content">
+                <h4>2024 - Aujourd'hui</h4>
+                <p><strong>Étudiant en informatique à Technolac</strong><br>Développement de projets interactifs et conception d'interfaces modernes.</p>
+              </div>
+            </div>
+            
+            <div class="timeline-item">
+              <div class="timeline-content">
+                <h4>2023 - 2024</h4>
+                <p><strong>Création de VR DICOM</strong><br>Développement d'une application VR collaborative (reconnaissance vocale & gestuelle).</p>
+              </div>
+            </div>
+            
+            <div class="timeline-item">
+              <div class="timeline-content">
+                <h4>2022 - 2023</h4>
+                <p><strong>Débuts dans le développement</strong><br>Apprentissage des bases du web (HTML, CSS, JS) et premières créations.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="skills show">
+      <h2 class="section-title">Résumé</h2>
+      
+      <div class="parent">
+          <div class="box box-white div1">
+              <h3><br>Passion</h3>
+          </div>
+          <div class="box box-blue div2">
+              <strong>Contact</strong>
+          </div>
+          <div class="box box-yellow div3">
+            <img src="image/faux_cv.png">
+            <a href="document/CV.pdf" download="CV_Theo_Ruel.pdf" class="btn-cv">
+              Mon CV
+            </a>
+          </div>
+          <div class="box box-coral div4">
+              <h3>Qualité </h3>
+          </div>
+          <div class="box box-dark div6">
+              <img src="image/avatar_grand.png">
+          </div>
+          <div class="box box-white div7">
+              <p>Jeux</p>
+          </div>
+          <div class="box box-white div8">
+              <h3>Anecdote Moi</h3>
+          </div>
+          <div class="box box-blue div9" id="theme-toggle" style="cursor: pointer;">
+              <strong id="theme-text">🌙 Mode Sombre</strong>
+          </div>
+          <div class="box box-yellow div10">
+              <strong>Langage que je maitrise</strong>
+          </div>
+          <div class="box box-coral div11" id="avatar-container-3d">
+              <spline-viewer url="https://prod.spline.design/ta-scene-3d-ici/scene.splinecode"></spline-viewer>
+          </div>
+      </div>
+    </section>
+
+    <section class="projects show">
+      <h2 class="section-title">Mes projets</h2>
+      
+      <div class="projects-grid">
+        <a href="#" class="pokemon-card">
+          <div class="pokemon-card-inner">
+            <div class="pokemon-card-header">
+              <span class="pokemon-name">VR DICOM</span>
+              <span class="pokemon-hp">120 PV</span>
+            </div>
+            <div class="pokemon-img placeholder-1"></div>
+            <div class="pokemon-info">
+              <p><strong>Attaque VR :</strong> Application collaborative avec reconnaissance vocale et interactions gestuelles.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="pokemon-card">
+          <div class="pokemon-card-inner">
+            <div class="pokemon-card-header">
+              <span class="pokemon-name">Portfolio</span>
+              <span class="pokemon-hp">90 PV</span>
+            </div>
+            <div class="pokemon-img placeholder-2"></div>
+            <div class="pokemon-info">
+              <p><strong>Charme Story :</strong> Site inspiré du storytelling Instagram, fluide et très immersif.</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="pokemon-card">
+          <div class="pokemon-card-inner">
+            <div class="pokemon-card-header">
+              <span class="pokemon-name">LibDocto</span>
+              <span class="pokemon-hp">100 PV</span>
+            </div>
+            <div class="pokemon-img placeholder-3"></div>
+            <div class="pokemon-info">
+              <p><strong>Soin Rapide :</strong> Plateforme web performante de prise de rendez-vous médical en ligne.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <audio id="audio"></audio>
+  <script src="portfolio.js"></script>
+</body>
+</html>
