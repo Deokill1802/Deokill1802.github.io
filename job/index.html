@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateur Job</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f7f3ed;
+      color: #38322c;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 40px 20px;
+    }
+
+    /* Vagues de couleur en arrière-plan */
+    .bg-wave {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Lugia en HAUT À GAUCHE */
+    .lugia-top-left {
+      position: fixed;
+      top: 20px;
+      left: 25px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .lugia-top-left img {
+      width: 180px;
+      height: auto;
+      display: block;
+    }
+
+    /* Plant & Bulbizarre Container (Bas Gauche) */
+    .floral-side {
+      position: fixed;
+      width: 280px;
+      height: auto;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.85;
+    }
+
+    .floral-left {
+      bottom: -10px;
+      left: -20px;
+    }
+
+    .bulbizarre-bottom-left {
+      position: fixed;
+      bottom: 25px;
+      left: 180px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .slow-gif {
+      animation: slowPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes slowPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    .bulbizarre-bottom-left img {
+      width: 80px;
+      height: auto;
+      display: block;
+    }
+
+    /* Lecteur Vinyle, Mew & Contrôles Audio (Haut Droite de l'écran) */
+    .vinyl-container-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      z-index: 10;
+    }
+
+    .vinyl-top-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mew-top-right img {
+      width: 75px;
+      height: auto;
+      display: block;
+    }
+
+    .vinyl-page-top-right {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      border: 4px solid #ffffff;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    .vinyl-page-top-right video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 10%;
+    }
+
+    /* Panneau Audio */
+    .audio-controls {
+      margin-top: 10px;
+      margin-right: 10px;
+      background: rgba(255, 253, 249, 0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(220, 208, 192, 0.8);
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .audio-btn {
+      background: #5c6b57;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .audio-btn:hover {
+      background: #4a5746;
+    }
+
+    .volume-slider {
+      width: 80px;
+      accent-color: #d98a6c;
+      cursor: pointer;
+    }
+
+    /* Pokémon GIF & Texte en BAS À DROITE */
+    .pokemon-bottom-right {
+      position: fixed;
+      bottom: 20px;
+      right: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .pokemon-bottom-right img {
+      width: 90px;
+      height: auto;
+      display: block;
+    }
+
+    .pokemon-bottom-right p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: #8c7a6b;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* Container principal */
+    .container {
+      background: rgba(255, 253, 249, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(220, 208, 192, 0.6);
+      border-radius: 28px;
+      padding: 45px 40px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(140, 120, 100, 0.08);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* En-tête du conteneur avec le champ Google Doc */
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+      gap: 15px;
+    }
+
+    .title-area h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #2b2520;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .title-area p {
+      font-size: 0.88rem;
+      color: #8c7a6b;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* Champ Lien Google Doc (En Haut à Droite du Rectangle) */
+    .doc-link-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      max-width: 220px;
+    }
+
+    .doc-link-wrapper label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8c7a6b;
+      margin-bottom: 6px;
+    }
+
+    .doc-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dcd3c5;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      font-family: inherit;
+      font-size: 0.82rem;
+      color: #38322c;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .doc-input:focus {
+      border-color: #a8927d;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(168, 146, 125, 0.15);
+    }
+
+    /* Espace Texte */
+    .text-area-wrapper {
+      width: 100%;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .text-area-wrapper label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8c7a6b;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 190px;
+      padding: 16px;
+      border: 1.5px solid #dcd3c5;
+      border-radius: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      font-family: inherit;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: #38322c;
+      resize: vertical;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    textarea:focus {
+      border-color: #a8927d;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(168, 146, 125, 0.15);
+    }
+
+    /* Section Bouton Unique */
+    .button-group {
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 24px;
+      width: 100%;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: #5c6b57;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(92, 107, 87, 0.22);
+    }
+
+    .btn-primary:hover {
+      background-color: #4a5746;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 107, 87, 0.3);
+    }
+
+    .note {
+      margin-top: 18px;
+      font-size: 0.78rem;
+      color: #9e8d7f;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio MP3 (Par défaut sur pause) -->
+  <audio id="bg-music" loop preload="metadata">
+    <source src="pokemon-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Vagues de couleur beige en arrière-plan -->
+  <svg class="bg-wave" viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none">
+    <path d="M-100 200 C300 350 600 50 1000 250 C1300 400 1500 150 1600 100 L1600 -100 L-100 -100 Z" fill="#eee7dc" opacity="0.7"/>
+    <path d="M-100 600 C200 450 500 750 900 550 C1200 400 1400 700 1600 600 L1600 1000 L-100 1000 Z" fill="#e8ded0" opacity="0.6"/>
+    <path d="M-100 400 C350 550 700 300 1100 500 C1350 620 1500 450 1600 400 L1600 1000 L-100 1000 Z" fill="#f0e9df" opacity="0.5"/>
+  </svg>
+
+  <!-- Lugia Agrandit en HAUT À GAUCHE -->
+  <div class="lugia-top-left slow-gif">
+    <img src="lugia.gif" alt="Lugia">
+  </div>
+
+  <!-- Plante -->
+  <svg class="floral-side floral-left" viewBox="0 0 200 350" fill="none" stroke="#4a5746" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M45 350 C55 240 30 140 40 45" />
+    <path d="M40 45 C25 30 25 10 40 20 C55 10 55 30 40 45 Z" fill="#e3a896" fill-opacity="0.6" />
+    <path d="M40 45 C20 25 40 0 40 20" />
+    <path d="M48 280 Q30 260 10 270 Q25 295 48 280 Z" fill="#6e7f68" fill-opacity="0.45" />
+    <path d="M43 210 Q65 190 85 205 Q70 230 43 210 Z" fill="#6e7f68" fill-opacity="0.45" />
+    <path d="M38 150 Q18 130 5 145 Q20 165 38 150 Z" fill="#6e7f68" fill-opacity="0.45" />
+    <path d="M38 95 Q58 80 75 92 Q62 112 38 95 Z" fill="#6e7f68" fill-opacity="0.45" />
+  </svg>
+
+  <!-- Bulbizarre à côté de la plante -->
+  <div class="bulbizarre-bottom-left slow-gif">
+    <img src="bulbizarre.gif" alt="Bulbizarre">
+  </div>
+
+  <!-- Mew, Vinyle & Contrôles Audio (Haut Droite) -->
+  <div class="vinyl-container-wrapper">
+    <div class="vinyl-top-row">
+      <div class="mew-top-right slow-gif">
+        <img src="mew.gif" alt="Mew">
+      </div>
+      <div class="vinyl-page-top-right">
+        <video autoplay loop muted playsinline>
+          <source src="spotify_player_animation.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- Contrôles sous le vinyle -->
+    <div class="audio-controls">
+      <button class="audio-btn" id="toggle-audio" onclick="toggleAudio()">▶</button>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
+    </div>
+  </div>
+
+  <!-- Pokémon GIF & Texte (Bas Droite) -->
+  <div class="pokemon-bottom-right slow-gif">
+    <img src="pokemon.gif" alt="Pokemon">
+    <p>une longue quete t'attend</p>
+  </div>
+
+  <div class="container">
+    
+    <!-- En-tête -->
+    <div class="header-layout">
+      <div class="title-area">
+        <h1>Simulateur Job</h1>
+        <p>Espace Candidature & Organisation</p>
+      </div>
+
+      <!-- Champ Lien Google Doc pré-rempli avec ton document -->
+      <div class="doc-link-wrapper">
+        <label for="gdoc-url">Lien Google Doc</label>
+        <input type="url" id="gdoc-url" class="doc-input" value="https://docs.google.com/document/d/1Wme5B2UDgLH_zccfojzizYtF5W-DGIb-JiPpTUKWuro/edit?usp=sharing" placeholder="Coller le lien ici..." />
+      </div>
+    </div>
+
+    <!-- Espace Texte Pré-rempli -->
+    <div class="text-area-wrapper">
+      <label for="user-notes">Message de présentation</label>
+      <textarea id="user-notes">Hello,
+
+I am currently looking for a Quality Engineer opportunity in the health field in the Grenoble area starting April 2025. I am particularly interested in improving security and quality using new and innovative technology to ensure patient safety. 
+
+In that regard, Electroducer fits perfectly within my criteria, with its mission to improve current surgical treatments during percutaneous cardiovascular interventions.
+
+I am currently a Operational Quality engineer in sterile drug manufacturing,</textarea>
+    </div>
+
+    <!-- Le Bouton Unique -->
+    <div class="button-group">
+      <button class="btn btn-primary" id="btn-ouvrir-doc" onclick="ouvrirTousLesLiensDuDoc()">
+        Lancer tous les liens
+      </button>
+    </div>
+
+    <p class="note">
+      * Pensez à autoriser les fenêtres surgissantes (pop-ups) sur votre navigateur.
+    </p>
+
+  </div>
+
+  <script>
+    // --- GESTION AUDIO ---
+    const bgMusic = document.getElementById('bg-music');
+    const toggleBtn = document.getElementById('toggle-audio');
+    let isFirstPlay = true;
+
+    bgMusic.volume = 0.5;
+
+    function toggleAudio() {
+      if (bgMusic.paused) {
+        if (isFirstPlay) {
+          if (bgMusic.duration) {
+            bgMusic.currentTime = Math.random() * bgMusic.duration;
+          } else {
+            bgMusic.addEventListener('loadedmetadata', () => {
+              bgMusic.currentTime = Math.random() * bgMusic.duration;
+            }, { once: true });
+          }
+          isFirstPlay = false;
+        }
+        bgMusic.play();
+        toggleBtn.innerText = '❚❚';
+      } else {
+        bgMusic.pause();
+        toggleBtn.innerText = '▶';
+      }
+    }
+
+    function changeVolume(val) {
+      bgMusic.volume = val;
+    }
+
+    // --- GESTION SAUVEGARDE DU TEXTAREA & GOOGLE DOC ---
+    const textarea = document.getElementById('user-notes');
+    const gdocInput = document.getElementById('gdoc-url');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedText = localStorage.getItem('savedPresentationText');
+      if (savedText !== null) {
+        textarea.value = savedText;
+      }
+      const savedGDoc = localStorage.getItem('savedGDocUrl');
+      if (savedGDoc !== null) {
+        gdocInput.value = savedGDoc;
+      }
+    });
+
+    textarea.addEventListener('input', () => {
+      localStorage.setItem('savedPresentationText', textarea.value);
+    });
+
+    gdocInput.addEventListener('input', () => {
+      localStorage.setItem('savedGDocUrl', gdocInput.value);
+    });
+
+    // --- EXTRACTION ET OUVERTURE DES LIENS DU GOOGLE DOC (Format Texte Brut) ---
+    async function ouvrirTousLesLiensDuDoc() {
+      const btn = document.getElementById('btn-ouvrir-doc');
+      const docUrl = gdocInput.value.trim();
+      
+      if (!docUrl) {
+        alert("Veuillez d'abord coller le lien de votre Google Doc dans le champ en haut à droite !");
+        return;
+      }
+
+      btn.innerText = "Chargement des liens...";
+
+      try {
+        // Extrait l'ID du document pour demander à Google l'exportation au format Texte pur
+        const docIdMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (!docIdMatch) {
+          throw new Error("Format d'URL Google Doc invalide.");
+        }
+        const docId = docIdMatch[1];
+        const exportTxtUrl = `https://docs.google.com/document/d/${docId}/export?format=txt`;
+
+        // Utilisation du proxy CORS pour lire le texte directement
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(exportTxtUrl)}`;
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        
+        // Regex robuste pour capturer toutes les URLs http/https
+        const urlRegex = /(https?:\/\/[^\s\n"<>]+)/g;
+        const linksFound = data.contents.match(urlRegex) || [];
+        
+        // Nettoyage et dédoublonnage
+        const cleanLinks = [...new Set(linksFound)].map(link => {
+          // Retire les caractères de ponctuation résiduels à la fin des URLs
+          return link.replace(/[.,;:)]+$/, '');
+        });
+
+        if (cleanLinks.length === 0) {
+          alert("Aucun lien n'a été trouvé dans le Google Doc. Assurez-vous que le document est partagé avec l'accès 'Tous les utilisateurs disposant du lien peuvent lire' !");
+        } else {
+          // Ouverture simultanée des liens
+          cleanLinks.forEach(url => window.open(url, '_blank'));
+        }
+
+      } catch (error) {
+        console.error("Erreur lors de la lecture du Google Doc :", error);
+        alert("Impossible de lire le Google Doc. Vérifiez qu'il est bien partagé en mode public.");
+      } finally {
+        btn.innerText = "Lancer tous les liens";
+      }
+    }
+  </script>
+
+</body>
+</html>
